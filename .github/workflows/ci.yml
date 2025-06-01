@@ -25,13 +25,6 @@ jobs:
         working-directory: HelloAp
         run: mvn clean install
 
-      - name: Upload Artifact
-        uses: actions/upload-artifact@v3
-        with:
-          name: springboot-app
-          path: HelloAp/target/*.jar
-
-
       - name: Run Tests
         working-directory: HelloAp
         run: mvn test
