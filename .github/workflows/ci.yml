@@ -22,6 +22,7 @@ jobs:
           java-version: '17'
 
       - name: Build with Maven
+        working-directory: HelloAp
         run: mvn clean install
 
       - name: Run Tests
