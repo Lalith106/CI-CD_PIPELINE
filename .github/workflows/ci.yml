@@ -25,7 +25,49 @@ jobs:
         working-directory: HelloAp
         run: mvn clean install
 
+      - name: Upload Artifact
+        uses: actions/upload-artifact@v3
+        with:
+          name: springboot-app
+          path: HelloAp/target/*.jar
+
+
       - name: Run Tests
         working-directory: HelloAp
         run: mvn test
+
+      - name: Upload JAR artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: springboot-jar
+          path: HelloAp/target/*.jar
+
+  deploy:
+    name: Deploy to Azure Web App
+    runs-on: ubuntu-latest
+    needs: build
+
+    steps:
+      - name: Download build artifact
+        uses: actions/download-artifact@v4
+        with:
+          name: springboot-jar
+          path: app
+
+      - name: Azure Login
+        uses: azure/login@v1
+        with:
+          client-id: ${{ secrets.AZURE_CLIENT_ID }}
+          tenant-id: ${{ secrets.AZURE_TENANT_ID }}
+          client-secret: ${{ secrets.AZURE_CLIENT_SECRET }}
+          subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
+
+      - name: Deploy to Azure Web App
+        uses: azure/webapps-deploy@v2
+        with:
+          app-name: ${{ secrets.AZURE_WEBAPP_NAME }}
+          package: app/*.jar
+
+
+
 
