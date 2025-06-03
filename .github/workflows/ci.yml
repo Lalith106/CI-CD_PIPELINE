@@ -2,10 +2,10 @@ name : Build Spring Boot App
 
 on:
   push:
-    branches : ["Development"]
+    branches : ["Aks_Test"]
   pull_request:
     branches:
-      - "Development"
+      - "Aks_Test"
 
 jobs:
   build:
@@ -29,34 +29,17 @@ jobs:
         working-directory: HelloAp
         run: mvn test
 
-      - name: Upload JAR artifact
-        uses: actions/upload-artifact@v4
-        with:
-          name: springboot-jar
-          path: HelloAp/target/*.jar
+      - name: Log in to ACR
+        run: |
+          echo "${{ secrets.ACR_PASSWORD }}" | docker login ${{ secrets.ACR_LOGIN_SERVER }} -u ${{ secrets.ACR_USERNAME }} --password-stdin
 
-  deploy:
-    name: Deploy to Azure Web App
-    runs-on: ubuntu-latest
-    needs: build
+      - name: Build Docker image
+        run: docker build -t ${{ secrets.ACR_LOGIN_SERVER }}/springboot-app:latest .
 
-    steps:
-      - name: Download build artifact
-        uses: actions/download-artifact@v4
-        with:
-          name: springboot-jar
-          path: app
+      - name: Push Docker image
+        run: docker push ${{ secrets.ACR_LOGIN_SERVER }}/springboot-app:latest
 
-      - name: 'Login via Azure'
-        uses: azure/login@v1
-        with:
-          creds: ${{ secrets.AZURE_CREDENTIALS }}
 
-      - name: Deploy to Azure Web App
-        uses: azure/webapps-deploy@v2
-        with:
-          app-name: ${{ secrets.AZURE_WEBAPP_NAME }}
-          package: app/*.jar
 
 
 
