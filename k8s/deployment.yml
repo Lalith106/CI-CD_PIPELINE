@@ -1,0 +1,19 @@
+apiVersion: apps/v1              # API version for Deployment kind
+kind: Deployment                 # This is a Deployment object
+metadata:
+  name: springboot-app           # Name of the Deployment
+spec:
+  replicas: 1                    # Number of pods (instances)
+  selector:
+    matchLabels:
+      app: springboot-app        # Labels to identify pods this Deployment manages
+  template:
+    metadata:
+      labels:
+        app: springboot-app      # Labels added to pods
+    spec:
+      containers:
+        - name: springboot-container       # Name of the container
+          image: myfirstacrname123.azurecr.io/springboot-app:latest  # Docker image from ACR
+          ports:
+            - containerPort: 8080

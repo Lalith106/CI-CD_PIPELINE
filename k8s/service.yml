@@ -1,0 +1,12 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: springboot-service        # Name of the Service
+spec:
+  type: LoadBalancer              # Makes app accessible from the internet
+  selector:
+    app: springboot-app           # Matches the pods created by the deployment
+  ports:
+    - protocol: TCP
+      port: 80                    # External port (users will access this)
+      targetPort: 8080
